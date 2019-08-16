@@ -1,14 +1,13 @@
 # FixTextPath
-Repo to host the script for fixing text on paths when opening an svg in Adobe Illustrator
+Adobe Illustrator does not support TextOnPath for SVGs at the moment. While they are picking up this issue, this script fixes TextOnPath when opening SVGs.
 
-Installation:
+How to install it:
+Copy to the script to the adobe directory on your PC.
 
 ### Windows:
-copy the script to the Presets\en_US\Scripts subfolder of the adobe installation folder 
-(you probably have to rename it to jsx to work)
+C:\Program Files\Adobe\Adobe Illustrator CC 2019\Presets\en_US\Scripts
 
 ### Mac:
-Navigate to Applications/Adobe Illustrator CC/Presets/en_GB/Scripts
-and copy the .js or .jsx files there.
+Applications/Adobe Illustrator CC/Presets/en_GB/Scripts
 
-The file path may differ depending on your version of Illustrator (could be CS6 instead of CC, for example), and also your language (could be ja_JP instead of en_GB, for example).
+The file path may differ depending on your version of Illustrator (could be CS6 instead of CC, for example), and also your language (could be ja_JP instead of en_GB, for example). You might need to rename it to jsx to make it work.
