@@ -1,5 +1,5 @@
 # FixTextPath
-Adobe Illustrator versions prior to 23.0.5 do not support TextOnPath for SVGs at the moment. This script fixes TextOnPath for those older versions when opening SVGs.
+Adobe Illustrator does not support TextOnPath for SVGs at the moment. While they are picking up this issue, this script fixes TextOnPath when opening SVGs.
 
 How to install it:
 Copy to the script to the adobe directory on your PC.
