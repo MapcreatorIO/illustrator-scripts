@@ -1,8 +1,11 @@
 # FixTextPath
 Adobe Illustrator does not support TextOnPath for SVGs at the moment. While they are picking up this issue, this script fixes TextOnPath when opening SVGs.
 
-How to install it:
-Copy to the script to the adobe directory on your PC.
+# GroupsToLayer
+When importing SVG's in Adobe Illustrator, it currently treats creates a group for each node. This script converts all top level groups to layers.
+
+# How to install a script:
+Copy to the script to the Adobe directory on your machine.
 
 ### Windows:
 C:\Program Files\Adobe\Adobe Illustrator CC 2019\Presets\en_US\Scripts
