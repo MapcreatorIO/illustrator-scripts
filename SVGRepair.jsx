@@ -1,15 +1,15 @@
-// (c) 2024 MapCreator BV, the Netherlands
+// (c) 2026 MapCreator BV, the Netherlands
 
 var defaultColorMappings=
   [
     //list of colors to replace. 
     //  format of rgbin is "<R> <G> <B>" with R,G,B as whole numbers from 0..255
     //  format of cmykin is "<C> <M> <Y> <K>" with C,M,Y,K as fractional numbers rounded to 2 decimal places, incl trailing zeros from 0..100
-    //  format of cmykout is "<C> <M> <Y> <K>" with C,M,Y,K as fractional numbers from 0..100
+    //  format of cmykout is "<C> <M> <Y> <K>" with C,M,Y,K as fractional numbers from 0..1
     //samples:
-    //{rgbin:"214 250 217", cmykout:"100 0 0 0"},
-    //{rgbin:"255 255 255", cmykout:"100 0 0 0"},
-    //{cmykin:"14.12 0.00 12.94 1.96", cmykout:"0 0 100 0"}
+    //{rgbin:"214 250 217", cmykout:"1 0 0 0"},
+    //{rgbin:"255 255 255", cmykout:"1 0 0 0"},
+    //{cmykin:"14.12 0.00 12.94 1.96", cmykout:"0 0 1 0"}
   ]
 
 var defaultFontMappings=
@@ -19,33 +19,48 @@ var defaultFontMappings=
     //{fontIn:{family:'Helvetica Neue LT Std',style:'55 Roman'},fontOut:{family:'Symbol',style:'Regular'}}
   ]
 
+// Configuration:
+// set convertColors to true for enabling colorconversion
+// set fixTextOnPath to true for enabling textOnPath fixups
+// add fonts to defaultFontMappings to enable fontreplacement
+
+var convertColors = false;
+var fixTextOnPath = false;
+
 {
-    //Convert colors to cmyk
-    var items = app.activeDocument.pageItems;
-    for (var i = 0; i < items.length; i++) {
-        AddNote(items[i]);
+    if (convertColors) {
+      //Convert colors to cmyk
+
+      var items = app.activeDocument.pageItems;
+      for (var i = 0; i < items.length; i++) {
+          AddNote(items[i]);
+      }
+
+      app.executeMenuCommand('doc-color-cmyk');
+
+      var items = app.activeDocument.pageItems;
+      for (var i = 0; i < items.length; i++) {
+         ParseNote(items[i],defaultColorMappings);
+      }
+    }
+    if (fixTextOnPath) {
+      //Fix text on path
+
+      var items = app.activeDocument.groupItems;
+      for (var i = items.length - 1; i >= 0; i--) {
+          if (items[i].name.indexOf('fixtextpath') == 0)
+              FixPath(items[i]);
+      }
     }
 
-    app.executeMenuCommand('doc-color-cmyk');
-
-    var items = app.activeDocument.pageItems;
-    for (var i = 0; i < items.length; i++) {
-       ParseNote(items[i],defaultColorMappings);
+    if (defaultFontMappings.length > 0 ) {
+      //Replace fonts
+      var items = app.activeDocument.textFrames;
+      for (var i = items.length - 1; i >= 0; i--) {
+            ReplaceFont(items[i]);
+      }
     }
 
-    //Fix text on path
-
-    var items = app.activeDocument.groupItems;
-    for (var i = items.length - 1; i >= 0; i--) {
-        if (items[i].name.indexOf('fixtextpath') == 0)
-            FixPath(items[i]);
-    }
-
-    //Replace fonts
-    var items = app.activeDocument.textFrames;
-    for (var i = items.length - 1; i >= 0; i--) {
-          ReplaceFont(items[i]);
-    }
     alert('Ready');
 }
 
@@ -134,10 +149,10 @@ function parse(col,defaultColorMappings) {
 function colFromString(s) {
   var res= new CMYKColor();
   var cmyk=s.split(" ");
-  res.cyan = Number(cmyk[0]);
-  res.magenta = Number(cmyk[1]);
-  res.yellow = Number(cmyk[2]);
-  res.black = Number(cmyk[3]);
+  res.cyan = Number(cmyk[0])*100;
+  res.magenta = Number(cmyk[1])*100;
+  res.yellow = Number(cmyk[2])*100;
+  res.black = Number(cmyk[3])*100;
   return res;
 }
 
@@ -164,43 +179,6 @@ function ReplaceFont(item) {
       }
     }
   }
-}
-
-function add(a, b) {
-    return [a[0] + b[0], a[1] + b[1]];
-}
-function sub(a, b) {
-    return [a[0] - b[0], a[1] - b[1]];
-}
-function mult(a, k) {
-    return [a[0] * k, a[1] * k];
-}
-function unit(p) {
-    var mag = Math.sqrt(p[0] * p[0] + p[1] * p[1]);
-    return [p[0] / mag, p[1] / mag];
-}
-function sup(a, b) {
-    var r = unit(sub(a, b));
-    return [-r[1], r[0]];
-}
-
-function offsetLine(line, offset) {
-    var zero = [0, 0];
-    var newLine = [];
-    for (var i = 0; i < line.length; i++) {
-        var b = line[i].anchor;
-        var aToB = i === 0 ? zero : sup(b, line[i - 1].anchor);
-        var bToC = i === line.length - 1 ? zero : sup(line[i + 1].anchor, b);
-        var extrude = add(aToB, bToC);
-        extrude = unit(extrude);
-        var cosHalfAngle = extrude[0] * bToC[0] + extrude[1] * bToC[1];
-        if (cosHalfAngle !== 0) {
-            extrude = mult(extrude, 1 / cosHalfAngle);
-        }
-        var newP = add(mult(extrude, offset), b);
-        newLine.push(newP);
-    }
-    return newLine;
 }
 
 function FixPath(item) {
@@ -230,8 +208,6 @@ function FixPath(item) {
         }
     }
     if (pathItem != null && item.parent.typename == 'GroupItem' && templateFrames.length > 0) {
-        var newGeo = offsetLine(pathItem.pathPoints, -templateFrames[0].textRange.characterAttributes.size * 0.4 / 2);
-        pathItem.setEntirePath(newGeo);
         for (var i = templateFrames.length-1; i>=0; i--) {
             var nw = item.parent.textFrames.pathText(pathItem.duplicate(), 0, 0, TextOrientation.HORIZONTAL, templateFrames[i]);
         }
