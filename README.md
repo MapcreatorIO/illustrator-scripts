@@ -1,5 +1,8 @@
-# FixTextPath
-Adobe Illustrator does not support TextOnPath for SVGs at the moment. While they are picking up this issue, this script fixes TextOnPath when opening SVGs.
+# SVGRepair
+Script to repair the most common options:
+- Convert colors to cmyk
+- Fix textpath issues
+- Replace fonts
 
 # GroupsToLayer
 When importing SVG's in Adobe Illustrator, it currently creates a group for each node. This script converts all top level groups to layers.
