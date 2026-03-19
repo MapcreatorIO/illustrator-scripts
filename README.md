@@ -4,6 +4,15 @@ Script to repair the most common options:
 - Fix textpath issues
 - Replace fonts
 
+## Configuration:
+set convertColors to true for enabling colorconversion
+set fixTextOnPath to true for enabling textOnPath fixups
+add fonts to defaultFontMappings to enable fontreplacement
+
+
+# FixTextPath
+Adobe Illustrator does not support TextOnPath for SVGs at the moment. While they are picking up this issue, this script fixes TextOnPath when opening SVGs.
+
 # GroupsToLayer
 When importing SVG's in Adobe Illustrator, it currently creates a group for each node. This script converts all top level groups to layers.
 
