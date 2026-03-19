@@ -5,10 +5,10 @@ Script to repair the most common options:
 - Replace fonts
 
 ## Configuration:
-- set convertColors to true for enabling colorconversion
+- Set convertColors to true for enabling colorconversion
   - Optionally add overrides to the defaultColorMappings array
-- set fixTextOnPath to true for enabling textOnPath fixups
-- add fonts to defaultFontMappings to enable fontreplacement
+- Set fixTextOnPath to true for enabling textOnPath fixups
+- Add fonts to defaultFontMappings to enable fontreplacement
 
 
 # FixTextPath
