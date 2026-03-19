@@ -77,6 +77,7 @@ function FixPath(item) {
         pathItem.setEntirePath(newGeo);
         for (var i = templateFrames.length-1; i>=0; i--) {
             var nw = item.parent.textFrames.pathText(pathItem.duplicate(), 0, 0, TextOrientation.HORIZONTAL, templateFrames[i]);
+            nw.opacity = item.opacity;
         }
         item.remove();
     }
